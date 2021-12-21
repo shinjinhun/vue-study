@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <title>끝말잇기</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="root">
+        <word-relay start-word="제로초"></word-relay>
+        <word-relay start-word="초밥"></word-relay>
+        <word-relay start-word="밥차"></word-relay>
+
+    </div>
+    <script>
+        Vue.component('wordRelay', {
+            template: `
+                <div>
+                    <div>{{word}}</div>
+                    <form v-on:submit="onSubmitForm">
+                        <input type="text" ref="answer" v-model="value">
+                        <button type="submit">입력!</button>
+                    </form>
+                    <div id="result">{{result}}</div>
+                </div>
+            `,
+            props: ['startWord'],
+            data() {
+                return {
+                    // word: '제로초',
+                    word: this.startWord,
+                    result: '',
+                    value: '',
+                }
+            },
+            methods: {
+                onSubmitForm(e){
+                    e.preventDefault();
+
+                    if(this.word[this.word.length - 1] === this.value[0]) {
+                        this.result = '딩동댕';
+                        this.word = this.value;
+                        this.value = '';
+                        this.$refs.answer.focus();
+                    } else {
+                        this.result = '땡';
+                        this.value = '';
+                        this.$refs.answer.focus();
+                    }
+
+                },
+           },
+        });
+
+    </script>
+    <script>
+        const app = new Vue({
+           el: '#root',
+        });
+    </script>
+</body>
+</html>
