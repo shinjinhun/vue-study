@@ -60,6 +60,7 @@ export default new Vuex.Store({ // import store from './store';
             mine: 0,
         },
         timer: 0,
+        halted: true,   // 중단된
         result: '',
     }, // vue의 data와 비슷
     
@@ -75,13 +76,16 @@ export default new Vuex.Store({ // import store from './store';
             };
             state.tableData = plantMine(row, cell, mine);
             state.timer = 0;
+            state.halted = false;
         },
         [OPEN_CELL](state) {},
         [CLICK_MINE](state) {},
         [FLAG_CELL](state) {},
         [QUESTION_CELL](state) {},
         [NORMALIZE_CELL](state) {},
-        [INCREMENT_TIMER](state) {},
+        [INCREMENT_TIMER](state) {
+            state.timer += 1;
+        },
     
     }, // state를 수정할 때 사용해요. 동기적으로
 });
