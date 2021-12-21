@@ -78,11 +78,60 @@ export default new Vuex.Store({ // import store from './store';
             state.timer = 0;
             state.halted = false;
         },
-        [OPEN_CELL](state) {},
-        [CLICK_MINE](state) {},
-        [FLAG_CELL](state) {},
-        [QUESTION_CELL](state) {},
-        [NORMALIZE_CELL](state) {},
+        [OPEN_CELL](state, {row, cell}) {
+
+            function checkAround() { // 주변 8칸 지뢰인지 검색
+                let around = [];
+                if(state.tableData[row - 1]) {
+                    around = around.concat([
+                        state.tableData[row -1][cell -1], state.tableData[row - 1][cell], state.tableData[row - 1][cell + 1]
+                    ]);
+                }
+                around = around.concat([
+                    state.tableData[row][cell -1], state.tableData[row][cell + 1]
+                ]);
+                if(state.tableData[row + 1]){
+                    around = around.concat([
+                        state.tableData[row + 1][cell - 1], state.tableData[row + 1][cell], state.tableData[row + 1][cell + 1]
+                    ]);
+                }
+                const counted = around.filter(function(v) {
+                    return [CODE.MINE, CODE.FLAG_MINE, CODE.QUESTION_MINE].includes(v);
+                });
+                return counted.length;
+            }
+            const count = checkAround();
+            
+            console.log('갯수 :', count);
+            
+            
+            Vue.set(state.tableData[row], cell, count);
+        },
+        [CLICK_MINE](state, { row, cell }) {
+            state.halted = true;
+            Vue.set(state.tableData[row], cell, CODE.CLICKED_MINE);
+        },
+        [FLAG_CELL](state, { row, cell }) {
+            if (state.tableData[row][cell] === CODE.MINE) {
+                Vue.set(state.tableData[row], cell, CODE.FLAG_MINE);
+            } else {
+                Vue.set(state.tableData[row], cell, CODE.FLAG);
+            }
+        },
+        [QUESTION_CELL](state, {row, cell}) {
+            if (state.tableData[row][cell] === CODE.FLAG_MINE) {
+                Vue.set(state.tableData[row], cell, CODE.QUESTION_MINE);
+            } else {
+                Vue.set(state.tableData[row], cell, CODE.QUESTION);
+            }
+        },
+        [NORMALIZE_CELL](state, {row, cell}) {
+            if (state.tableData[row][cell] === CODE.QUESTION_MINE) {
+                Vue.set(state.tableData[row], cell, CODE.MINE);
+            } else {
+                Vue.set(state.tableData[row], cell, CODE.NORMAL);
+            }
+        },
         [INCREMENT_TIMER](state) {
             state.timer += 1;
         },
